@@ -1,28 +1,28 @@
-﻿using JwtAuth.Application.Dtos;
-using JwtAuth.Domain.Entities;
-using JwtAuth.Infrastructure.Services;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using TirsvadWeb.JwtAuth.Application.Models;
+using TirsvadWeb.JwtAuth.Application.Services;
+using TirsvadWeb.JwtAuth.Domain.Entities;
 
-namespace JwtAuth.Controllers;
+namespace TirsvadWeb.JwtAuth.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
 public class AuthController(IAuthService authService) : ControllerBase
 {
-
     [HttpPost("register")]
-    public async Task<ActionResult<User>> RegisterAsync(UserDto reqyuest)
+    public async Task<ActionResult<ApplicationUser>> RegisterAsync(ApplicationUserDto reqyuest)
     {
-        User? user = await authService.RegisterAsync(reqyuest);
+        ApplicationUser? user = await authService.RegisterAsync(reqyuest);
         if (user == null)
             return BadRequest("User already exists");
 
         return Ok(user);
     }
 
+    [AllowAnonymous]
     [HttpPost("login")]
-    public async Task<ActionResult<TokenRepondseDto>> Login(UserDto request)
+    public async Task<ActionResult<TokenRepondseDto>> Login([FromBody] ApplicationUserDto request)
     {
         TokenRepondseDto? result = await authService.LoginAsync(request);
 
@@ -49,4 +49,5 @@ public class AuthController(IAuthService authService) : ControllerBase
     {
         return Ok("You are allowed here");
     }
+
 }
